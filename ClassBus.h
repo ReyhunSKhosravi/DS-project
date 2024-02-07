@@ -12,16 +12,3 @@ public:
     Bus(/* args */);
     ~Bus();
 };
-
-Bus::Bus(/* args */)
-{
-}
-
-Bus::~Bus()
-{
-}
-
-int main(){
-
-    return 0;
-}

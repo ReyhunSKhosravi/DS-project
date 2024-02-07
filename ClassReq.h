@@ -10,14 +10,3 @@ public:
     ~Request();
 };
 
-Request::Request(/* args */)
-{
-}
-
-Request::~Request()
-{
-}
-
-int main(){
-    return 0;
-}
