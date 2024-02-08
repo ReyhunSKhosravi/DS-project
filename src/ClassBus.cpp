@@ -1,4 +1,4 @@
-#include "ClassBus.h"
+#include "../include/ClassBus.hpp"
 Bus::Bus(/* args */)
 {
 }
