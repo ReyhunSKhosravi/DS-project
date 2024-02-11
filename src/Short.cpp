@@ -9,22 +9,23 @@
 
 using namespace std;
 
-// Enum برای نوع وسایل نقلیه
+
+//------------------------------------------------------------------------------------------Enum for type of vehicles
 enum class TransportType {
     Metro,
     Bus,
     Taxi
 };
 
-// ساختار برای نمایش یک راس در گراف
+//------------------------------------------------------------------------Structure to represent a vertex in the graph
 struct Vertex {
     string name;
     unordered_map<Vertex*, pair<int, TransportType>> neighbors;
 
-    explicit Vertex(const string& name) : name(name) {}
+    explicit Vertex(const string& name) : name(name) {} // because one order in costructor->> explicit 
 };
 
-// خواندن گراف از فایل
+//--------------------------------------------------------------------------------------Read graph information from file
 vector<Vertex*> readGraphFromFile(const string& filename) {
     vector<Vertex*> vertices;
     ifstream file(filename);
@@ -35,14 +36,14 @@ vector<Vertex*> readGraphFromFile(const string& filename) {
     string line;
     while (getline(file, line)) {
         istringstream iss(line);
-        string sourceName, destName;
+        string originName, destName;
         int weight;
-        string transportTypeStr;
-        if (iss >> sourceName >> destName >> weight >> transportTypeStr) {
-            if (vertexMap.find(sourceName) == vertexMap.end()) {
-                Vertex* sourceVertex = new Vertex(sourceName);
-                vertices.push_back(sourceVertex);
-                vertexMap[sourceName] = sourceVertex;
+        string transportTypeStr; 
+        if (iss >> originName >> destName >> weight >> transportTypeStr) {
+            if (vertexMap.find(originName) == vertexMap.end()) {
+                Vertex* originVertex = new Vertex(originName);
+                vertices.push_back(originVertex);
+                vertexMap[originName] = originVertex;
             }
             if (vertexMap.find(destName) == vertexMap.end()) {
                 Vertex* destVertex = new Vertex(destName);
@@ -59,26 +60,26 @@ vector<Vertex*> readGraphFromFile(const string& filename) {
             } else {
                 throw invalid_argument("Invalid transport type.");
             }
-            vertexMap[sourceName]->neighbors[vertexMap[destName]] = make_pair(weight, transportType);
+            vertexMap[originName]->neighbors[vertexMap[destName]] = make_pair(weight, transportType);
         }
     }
     file.close();
     return vertices;
 }
 
-// الگوریتم دکسترا برای یافتن کوتاه‌ترین مسیر
+//----------------------------------------------------------------------------Algorithm (Dijkstra) to find the shortest path
 void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const string& destinationName) {
-    Vertex* source = nullptr;
+    Vertex* origin = nullptr;
     Vertex* destination = nullptr;
     for (Vertex* vertex : vertices) {
         if (vertex->name == sourceName) {
-            source = vertex;
+            origin = vertex;
         } else if (vertex->name == destinationName) {
             destination = vertex;
         }
     }
-    if (!source) {
-        cerr << "Error: Source vertex not found." << endl;
+    if (!origin) {
+        cerr << "Error: origin vertex not found." << endl;
         return;
     }
     if (!destination) {
@@ -89,9 +90,9 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
     for (Vertex* vertex : vertices) {
         distance[vertex] = numeric_limits<int>::max();
     }
-    distance[source] = 0;
+    distance[origin] = 0;
     priority_queue<pair<int, Vertex*>, vector<pair<int, Vertex*>>, greater<pair<int, Vertex*>>> pq;
-    pq.push({0, source});
+    pq.push({0, origin});
     unordered_map<Vertex*, Vertex*> parent;
     while (!pq.empty()) {
         Vertex* u = pq.top().second;
@@ -152,9 +153,9 @@ int main() {
     try {
         string filename = "input.txt";
         vector<Vertex*> vertices = readGraphFromFile(filename);
-        string sourceName = "Boostan-e_laleh";
+        string originName = "Boostan-e_laleh";
         string destinationName = "Meydan-e_Azadi";
-        dijkstra(vertices, sourceName, destinationName);
+        dijkstra(vertices, originName, destinationName);
         for (Vertex* vertex : vertices) {
             delete vertex;
         }
