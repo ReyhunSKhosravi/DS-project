@@ -86,12 +86,13 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
         cerr << "Error: Destination vertex not found." << endl;
         return;
     }
-    unordered_map<Vertex*, int> distance;
+    // ye arraye baraye kotah tarin masir
+    unordered_map<Vertex*, int> distance; // hame yal hayi ke bayad barresi shavad
     for (Vertex* vertex : vertices) {
         distance[vertex] = numeric_limits<int>::max();
     }
-    distance[origin] = 0;
-    priority_queue<pair<int, Vertex*>, vector<pair<int, Vertex*>>, greater<pair<int, Vertex*>>> pq;
+    distance[origin] = 0; // node shorore dar ebteda 0
+    priority_queue<pair<int, Vertex*>, vector<pair<int, Vertex*>>, greater<pair<int, Vertex*>>> pq; //safe node hayi ke bayad barresi beshe
     pq.push({0, origin});
     unordered_map<Vertex*, Vertex*> parent;
     while (!pq.empty()) {
@@ -101,9 +102,10 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
         if (u == destination) {
             break;
         }
-        for (auto& neighbor : u->neighbors) {
-            Vertex* v = neighbor.first;
-            int weight = neighbor.second.first;
+        // barresi hame yal haye mojaver node
+        for (auto& neighbor : u->neighbors) { 
+            Vertex* v = neighbor.first; // maghsad
+            int weight = neighbor.second.first;//vazne yal
             if (dist + weight < distance[v]) {
                 distance[v] = dist + weight;
                 pq.push({distance[v], v});
@@ -119,7 +121,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
         vector<TransportType> transportTypes;
         Vertex* current = destination;
         while (current) {
-            path.push_back(current->name);
+            path.push_back(current->name); //be saf baraye barersi ezafemishavad
             if (parent.find(current) != parent.end()) {
                 transportTypes.push_back(current->neighbors[parent[current]].second);
             }
