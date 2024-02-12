@@ -86,7 +86,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
         cerr << "Error: Destination vertex not found." << endl;
         return;
     }
-    // ye arraye baraye kotah tarin masir
+    //ye arraye baraye kotah tarin masir
     unordered_map<Vertex*, int> distance; // hame yal hayi ke bayad barresi shavad
     for (Vertex* vertex : vertices) {
         distance[vertex] = numeric_limits<int>::max();
