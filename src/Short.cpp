@@ -14,7 +14,7 @@ using namespace std;
 enum class TransportType {
     Metro,
     Bus,
-    Taxi
+    Taxi,
 };
 
 //------------------------------------------------------------------------Structure to represent a vertex in the graph
@@ -132,13 +132,13 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
             cout << " (";
             switch (transportTypes.back()) {
                 case TransportType::Metro:
-                    cout << "Metro";
+                    cout << "Metro ";
                     break;
                 case TransportType::Bus:
                     cout << "Bus";
                     break;
                 case TransportType::Taxi:
-                    cout << "Taxi";
+                    cout << "Metro/Taxi";
                     break;
             }
             cout << ")";
@@ -155,8 +155,8 @@ int main() {
     try {
         string filename = "input.txt";
         vector<Vertex*> vertices = readGraphFromFile(filename);
-        string originName = "Boostan-e_laleh";
-        string destinationName = "Meydan-e_Azadi";
+        string originName = "Ferdowsi";
+        string destinationName = "Ebn-e_Sina";
         dijkstra(vertices, originName, destinationName);
         for (Vertex* vertex : vertices) {
             delete vertex;
