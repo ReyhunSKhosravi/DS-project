@@ -9,51 +9,75 @@
 
 using namespace std;
 
-enum class TransportType {
+enum class TransportType
+{
     Metro,
     Bus,
     Taxi,
 };
 
-struct Vertex {
-    string name;
-    unordered_map<Vertex*, pair<int, TransportType>> neighbors;
-
-    explicit Vertex(const string& name) : name(name) {}
+enum class Colour
+{
+    RED,
+    BLUE,
+    YELLOW,
+    PINK,
+    GRAY,
+    GREEN,
+    BROWN,
 };
 
-vector<Vertex*> readGraphFromFile(const string& filename) {
-    vector<Vertex*> vertices;
+struct Vertex
+{
+    string name;
+    unordered_map<Vertex *, pair<int, TransportType>> neighbors;
+
+    explicit Vertex(const string &name) : name(name) {}
+};
+
+vector<Vertex *> readGraphFromFile(const string &filename)
+{
+    vector<Vertex *> vertices;
     ifstream file(filename);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         throw runtime_error("Error: Unable to open the file.");
     }
-    unordered_map<string, Vertex*> vertexMap;
+    unordered_map<string, Vertex *> vertexMap;
     string line;
-    while (getline(file, line)) {
+    while (getline(file, line))
+    {
         istringstream iss(line);
         string originName, destName;
         int weight;
-        string transportTypeStr;
-        if (iss >> originName >> destName >> weight >> transportTypeStr) {
-            if (vertexMap.find(originName) == vertexMap.end()) {
-                Vertex* originVertex = new Vertex(originName);
+        string transportTypeStr, colourstr;
+        if (iss >> originName >> destName >> weight >> transportTypeStr >> colourstr)
+        {
+            if (vertexMap.find(originName) == vertexMap.end())
+            {
+                Vertex *originVertex = new Vertex(originName);
                 vertices.push_back(originVertex);
                 vertexMap[originName] = originVertex;
             }
-            if (vertexMap.find(destName) == vertexMap.end()) {
-                Vertex* destVertex = new Vertex(destName);
+            if (vertexMap.find(destName) == vertexMap.end())
+            {
+                Vertex *destVertex = new Vertex(destName);
                 vertices.push_back(destVertex);
                 vertexMap[destName] = destVertex;
             }
             TransportType transportType;
-            if (transportTypeStr == "1") {
+            switch (stoi(transportTypeStr))
+            {
+            case 1:
                 transportType = TransportType::Metro;
-            } else if (transportTypeStr == "2") {
+                break;
+            case 2:
                 transportType = TransportType::Bus;
-            } else if (transportTypeStr == "3") {
+                break;
+            case 3:
                 transportType = TransportType::Taxi;
-            } else {
+                break;
+            default:
                 throw invalid_argument("Invalid transport type.");
             }
             vertexMap[originName]->neighbors[vertexMap[destName]] = make_pair(weight, transportType);
@@ -63,76 +87,96 @@ vector<Vertex*> readGraphFromFile(const string& filename) {
     return vertices;
 }
 
-void dfs(Vertex* current, Vertex* destination, vector<vector<pair<string, TransportType>>>& allPaths, vector<pair<string, TransportType>>& currentPath, unordered_map<Vertex*, bool>& visited) {
+void dfs(Vertex *current, Vertex *destination, vector<vector<pair<string, TransportType>>> &allPaths, vector<pair<string, TransportType>> &currentPath, unordered_map<Vertex *, bool> &visited)
+{
     visited[current] = true;
-    currentPath.push_back({current->name, TransportType::Metro}); // می توانید از هر نوع حمل و نقلی که مد نظر خودتان استفاده کنید.
-    if (current == destination) {
+    if (current == destination)
+    {
         allPaths.push_back(currentPath);
-    } else {
-        for (auto& neighbor : current->neighbors) {
-            Vertex* next = neighbor.first;
-            if (!visited[next]) {
+    }
+    else
+    {
+        for (auto &neighbor : current->neighbors)
+        {
+            Vertex *next = neighbor.first;
+            if (!visited[next])
+            {
+                currentPath.push_back({current->name, neighbor.second.second}); // نوع وسیله نقلیه را از مقدار مورد نظر در فایل ورودی بگیرید
                 dfs(next, destination, allPaths, currentPath, visited);
+                currentPath.pop_back();
             }
         }
     }
-    currentPath.pop_back();
     visited[current] = false;
 }
 
-void printShortestPath(const vector<vector<pair<string, TransportType>>>& allPaths, const unordered_map<string, int>& distances) {
-    if (allPaths.empty()) {
+void printShortestPath(const vector<vector<pair<string, TransportType>>> &allPaths, const unordered_map<string, int> &distances)
+{
+    if (allPaths.empty())
+    {
         cout << "No path exists." << endl;
         return;
     }
     int shortestDistance = numeric_limits<int>::max();
     int shortestPathIndex = -1;
-    for (size_t i = 0; i < allPaths.size(); ++i) {
+    for (size_t i = 0; i < allPaths.size(); ++i)
+    {
         int pathDistance = 0;
-        for (size_t j = 0; j < allPaths[i].size() - 1; ++j) {
+        for (size_t j = 0; j < allPaths[i].size() - 1; ++j)
+        {
             string edgeName = allPaths[i][j].first + "-" + allPaths[i][j + 1].first;
             pathDistance += distances.at(edgeName);
         }
-        if (pathDistance < shortestDistance) {
+        if (pathDistance < shortestDistance)
+        {
             shortestDistance = pathDistance;
             shortestPathIndex = i;
         }
     }
     cout << "Shortest path: ";
-    for (size_t i = 0; i < allPaths[shortestPathIndex].size(); ++i) {
-        cout << allPaths[shortestPathIndex][i].first << " ("; // نام راس
-        switch (allPaths[shortestPathIndex][i].second) {
-            case TransportType::Metro:
-                cout << "Metro";
-                break;
-            case TransportType::Bus:
-                cout << "Bus";
-                break;
-            case TransportType::Taxi:
-                cout << "Taxi";
-                break;
+    for (size_t i = 0; i < allPaths[shortestPathIndex].size(); ++i)
+    {
+        cout << allPaths[shortestPathIndex][i].first << " (";
+        switch (allPaths[shortestPathIndex][i].second)
+        {
+        case TransportType::Metro:
+            cout << "Metro";
+            break;
+        case TransportType::Bus:
+            cout << "Bus";
+            break;
+        case TransportType::Taxi:
+            cout << "Taxi";
+            break;
         }
         cout << ")";
-        if (i + 1 < allPaths[shortestPathIndex].size()) {
+        if (i + 1 < allPaths[shortestPathIndex].size())
+        {
             cout << " -> ";
         }
     }
     cout << ", Distance: " << shortestDistance << endl;
 }
 
-void findPaths(const vector<Vertex*>& vertices, const string& sourceName, const string& destinationName) {
-    Vertex* source = nullptr;
-    Vertex* destination = nullptr;
-    unordered_map<Vertex*, bool> visited;
-    for (Vertex* vertex : vertices) {
+void findPaths(const vector<Vertex *> &vertices, const string &sourceName, const string &destinationName)
+{
+    Vertex *source = nullptr;
+    Vertex *destination = nullptr;
+    unordered_map<Vertex *, bool> visited;
+    for (Vertex *vertex : vertices)
+    {
         visited[vertex] = false;
-        if (vertex->name == sourceName) {
+        if (vertex->name == sourceName)
+        {
             source = vertex;
-        } else if (vertex->name == destinationName) {
+        }
+        else if (vertex->name == destinationName)
+        {
             destination = vertex;
         }
     }
-    if (!source || !destination) {
+    if (!source || !destination)
+    {
         cerr << "Error: Source or destination vertex not found." << endl;
         return;
     }
@@ -141,8 +185,10 @@ void findPaths(const vector<Vertex*>& vertices, const string& sourceName, const 
     dfs(source, destination, allPaths, currentPath, visited);
 
     unordered_map<string, int> distances;
-    for (Vertex* vertex : vertices) {
-        for (auto& neighbor : vertex->neighbors) {
+    for (Vertex *vertex : vertices)
+    {
+        for (auto &neighbor : vertex->neighbors)
+        {
             string edgeName = vertex->name + "-" + neighbor.first->name;
             distances[edgeName] = neighbor.second.first;
         }
@@ -151,17 +197,22 @@ void findPaths(const vector<Vertex*>& vertices, const string& sourceName, const 
     printShortestPath(allPaths, distances);
 }
 
-int main() {
-    try {
+int main()
+{
+    try
+    {
         string filename = "input.txt";
-        vector<Vertex*> vertices = readGraphFromFile(filename);
+        vector<Vertex *> vertices = readGraphFromFile(filename);
         string originName = "Boostan-e_laleh";
-        string destinationName = "Meydan-e_Azadi";
+        string destinationName = "Meydan-e_Azad";
         findPaths(vertices, originName, destinationName);
-        for (Vertex* vertex : vertices) {
+        for (Vertex *vertex : vertices)
+        {
             delete vertex;
         }
-    } catch (const exception& e) {
+    }
+    catch (const exception &e)
+    {
         cerr << e.what() << endl;
     }
     return 0;
