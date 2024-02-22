@@ -1,138 +1,155 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <list>
+#include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
+#include <stack>
 #include <limits>
 
 using namespace std;
 
-class Graph {
-    int V; // Number of vertices
-    vector<list<pair<int, int>>> adj; // Adjacency list
-    map<string, int> verticesMap; // Map to store vertices as string to int
-
-public:
-    Graph() : V(0) {}
-
-    // Function to add a new edge to the graph
-    void addEdge(int v, int w, int weight) {
-        adj[v].push_back(make_pair(w, weight));
-    }
-
-    // Function to add a new vertex to the graph
-    void addVertex(string vertex) {
-        if (verticesMap.find(vertex) == verticesMap.end()) {
-            verticesMap[vertex] = V++;
-            adj.resize(V);
-        }
-    }
-
-    // Function to get the vertex number corresponding to the vertex name
-    int getVertexNumber(string vertex) {
-        if (verticesMap.find(vertex) != verticesMap.end()) {
-            return verticesMap[vertex];
-        }
-        return -1;
-    }
-
-    // Depth-first search (DFS) algorithm to find the shortest path
-    void DFSUtil(int v, int dest, vector<bool>& visited, vector<int>& path, vector<int>& shortestPath, int& shortestPathWeight) {
-        visited[v] = true;
-        path.push_back(v);
-
-        if (v == dest) {
-            int pathWeight = 0;
-            for (int i = 0; i < path.size() - 1; ++i) {
-                for (auto it = adj[path[i]].begin(); it != adj[path[i]].end(); ++it) {
-                    if (it->first == path[i + 1]) {
-                        pathWeight += it->second;
-                        break;
-                    }
-                }
-            }
-            if (pathWeight < shortestPathWeight) {
-                shortestPathWeight = pathWeight;
-                shortestPath = path;
-            }
-        } else {
-            for (auto i = adj[v].begin(); i != adj[v].end(); ++i) {
-                if (!visited[i->first]) {
-                    DFSUtil(i->first, dest, visited, path, shortestPath, shortestPathWeight);
-                }
-            }
-        }
-
-        path.pop_back();
-        visited[v] = false;
-    }
-
-    // Function to find the shortest path between two vertices
-    vector<int> findShortestPath(string srcStr, string destStr) {
-        int src = verticesMap[srcStr];
-        int dest = verticesMap[destStr];
-
-        vector<bool> visited(V, false);
-        vector<int> path, shortestPath;
-        int shortestPathWeight = numeric_limits<int>::max();
-
-        DFSUtil(src, dest, visited, path, shortestPath, shortestPathWeight);
-
-        return shortestPath;
-    }
-
-    // Function to get the vertices map
-    map<string, int> getVerticesMap() const {
-        return verticesMap;
-    }
+enum class TransportType {
+    Metro,
+    Bus,
+    Taxi,
 };
 
-int main() {
-    // Create a graph instance
-    Graph g;
+struct Vertex {
+    string name;
+    unordered_map<Vertex*, pair<int, TransportType>> neighbors;
 
-    // Open the file
-    ifstream inputFile("input.txt");
-    if (!inputFile.is_open()) {
-        cerr << "Error: Unable to open the file." << endl;
-        return 1;
+    explicit Vertex(const string& name) : name(name) {}
+};
+
+vector<Vertex*> readGraphFromFile(const string& filename) {
+    vector<Vertex*> vertices;
+    ifstream file(filename);
+    if (!file.is_open()) {
+        throw runtime_error("Error: Unable to open the file.");
     }
-
-    // Read the file line by line
+    unordered_map<string, Vertex*> vertexMap;
     string line;
-    while (getline(inputFile, line)) {
-        stringstream ss(line);
-        string src, dest;
+    while (getline(file, line)) {
+        istringstream iss(line);
+        string originName, destName;
         int weight;
-        ss >> src >> dest >> weight;
-
-        // Add vertices and edges to the graph
-        g.addVertex(src);
-        g.addVertex(dest);
-        g.addEdge(g.getVertexNumber(src), g.getVertexNumber(dest), weight);
+        string transportTypeStr;
+        if (iss >> originName >> destName >> weight >> transportTypeStr) {
+            if (vertexMap.find(originName) == vertexMap.end()) {
+                Vertex* originVertex = new Vertex(originName);
+                vertices.push_back(originVertex);
+                vertexMap[originName] = originVertex;
+            }
+            if (vertexMap.find(destName) == vertexMap.end()) {
+                Vertex* destVertex = new Vertex(destName);
+                vertices.push_back(destVertex);
+                vertexMap[destName] = destVertex;
+            }
+            TransportType transportType;
+            if (transportTypeStr == "1") {
+                transportType = TransportType::Metro;
+            } else if (transportTypeStr == "2") {
+                transportType = TransportType::Bus;
+            } else if (transportTypeStr == "3") {
+                transportType = TransportType::Taxi;
+            } else {
+                throw invalid_argument("Invalid transport type.");
+            }
+            vertexMap[originName]->neighbors[vertexMap[destName]] = make_pair(weight, transportType);
+        }
     }
+    file.close();
+    return vertices;
+}
 
-    // Close the file
-    inputFile.close();
-
-    string srcStr = "Meydan-e_Hazrat-e_ValiAsr";
-    string destStr = "Haram-e_Hazrat-e_Abdolazim";
-
-    // Find the shortest path
-    vector<int> shortestPath = g.findShortestPath(srcStr, destStr);
-
-    // Display the shortest path
-    cout << "Shortest path between " << srcStr << " and " << destStr << ":\n";
-    for (int i = 0; i < shortestPath.size(); ++i) {
-        for (auto it = g.getVerticesMap().begin(); it != g.getVerticesMap().end(); ++it) {
-            if (it->second == shortestPath[i]) {
-                cout << it->first << " ";
-                break;
+void dfs(Vertex* current, Vertex* destination, vector<vector<string>>& allPaths, vector<string>& currentPath, unordered_map<Vertex*, bool>& visited) {
+    visited[current] = true;
+    currentPath.push_back(current->name);
+    if (current == destination) {
+        allPaths.push_back(currentPath);
+    } else {
+        for (auto& neighbor : current->neighbors) {
+            Vertex* next = neighbor.first;
+            if (!visited[next]) {
+                dfs(next, destination, allPaths, currentPath, visited);
             }
         }
     }
-    cout << endl;
+    currentPath.pop_back();
+    visited[current] = false;
+}
 
+void printShortestPath(const vector<vector<string>>& allPaths, const unordered_map<string, int>& distances) {
+    if (allPaths.empty()) {
+        cout << "No path exists." << endl;
+        return;
+    }
+    int shortestDistance = numeric_limits<int>::max();
+    int shortestPathIndex = -1;
+    for (size_t i = 0; i < allPaths.size(); ++i) {
+        int pathDistance = 0;
+        for (size_t j = 0; j < allPaths[i].size() - 1; ++j) {
+            pathDistance += distances.at(allPaths[i][j] + "-" + allPaths[i][j + 1]);
+        }
+        if (pathDistance < shortestDistance) {
+            shortestDistance = pathDistance;
+            shortestPathIndex = i;
+        }
+    }
+    cout << "Shortest path: ";
+    for (size_t i = 0; i < allPaths[shortestPathIndex].size(); ++i) {
+        cout << allPaths[shortestPathIndex][i];
+        if (i + 1 < allPaths[shortestPathIndex].size()) {
+            cout << " -> ";
+        }
+    }
+    cout << ", Distance: " << shortestDistance << endl;
+}
+
+void findPaths(const vector<Vertex*>& vertices, const string& sourceName, const string& destinationName) {
+    Vertex* source = nullptr;
+    Vertex* destination = nullptr;
+    unordered_map<Vertex*, bool> visited;
+    for (Vertex* vertex : vertices) {
+        visited[vertex] = false;
+        if (vertex->name == sourceName) {
+            source = vertex;
+        } else if (vertex->name == destinationName) {
+            destination = vertex;
+        }
+    }
+    if (!source || !destination) {
+        cerr << "Error: Source or destination vertex not found." << endl;
+        return;
+    }
+    vector<vector<string>> allPaths;
+    vector<string> currentPath;
+    dfs(source, destination, allPaths, currentPath, visited);
+
+    unordered_map<string, int> distances;
+    for (Vertex* vertex : vertices) {
+        for (auto& neighbor : vertex->neighbors) {
+            string edgeName = vertex->name + "-" + neighbor.first->name;
+            distances[edgeName] = neighbor.second.first;
+        }
+    }
+
+    printShortestPath(allPaths, distances);
+}
+
+int main() {
+    try {
+        string filename = "input.txt";
+        vector<Vertex*> vertices = readGraphFromFile(filename);
+        string originName = "Boostan-e_laleh";
+        string destinationName = "Meydan-e_Azadi";
+        findPaths(vertices, originName, destinationName);
+        for (Vertex* vertex : vertices) {
+            delete vertex;
+        }
+    } catch (const exception& e) {
+        cerr << e.what() << endl;
+    }
     return 0;
 }
