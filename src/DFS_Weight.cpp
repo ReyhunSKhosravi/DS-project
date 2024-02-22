@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <list>
 #include <vector>
 #include <map>
@@ -90,19 +92,29 @@ int main() {
     // Create a graph instance
     Graph g;
 
-    // Add vertices and edges to the graph
-    g.addVertex("Meydan-e_Hazrat-e_ValiAsr");
-    g.addVertex("Haftom-e_Tir");
-    g.addVertex("Emam_Hossein");
-    g.addVertex("Meydan-e_Shohada");
-    g.addVertex("Shahid_Rezaei");
-    g.addVertex("Haram-e_Hazrat-e_Abdolazim");
+    // Open the file
+    ifstream inputFile("input.txt");
+    if (!inputFile.is_open()) {
+        cerr << "Error: Unable to open the file." << endl;
+        return 1;
+    }
 
-    g.addEdge(g.getVertexNumber("Meydan-e_Hazrat-e_ValiAsr"), g.getVertexNumber("Haftom-e_Tir"), 4);
-    g.addEdge(g.getVertexNumber("Haftom-e_Tir"), g.getVertexNumber("Emam_Hossein"), 10);
-    g.addEdge(g.getVertexNumber("Emam_Hossein"), g.getVertexNumber("Meydan-e_Shohada"), 4);
-    g.addEdge(g.getVertexNumber("Meydan-e_Shohada"), g.getVertexNumber("Shahid_Rezaei"), 12);
-    g.addEdge(g.getVertexNumber("Shahid_Rezaei"), g.getVertexNumber("Haram-e_Hazrat-e_Abdolazim"), 20);
+    // Read the file line by line
+    string line;
+    while (getline(inputFile, line)) {
+        stringstream ss(line);
+        string src, dest;
+        int weight;
+        ss >> src >> dest >> weight;
+
+        // Add vertices and edges to the graph
+        g.addVertex(src);
+        g.addVertex(dest);
+        g.addEdge(g.getVertexNumber(src), g.getVertexNumber(dest), weight);
+    }
+
+    // Close the file
+    inputFile.close();
 
     string srcStr = "Meydan-e_Hazrat-e_ValiAsr";
     string destStr = "Haram-e_Hazrat-e_Abdolazim";
