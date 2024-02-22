@@ -63,9 +63,9 @@ vector<Vertex*> readGraphFromFile(const string& filename) {
     return vertices;
 }
 
-void dfs(Vertex* current, Vertex* destination, vector<vector<string>>& allPaths, vector<string>& currentPath, unordered_map<Vertex*, bool>& visited) {
+void dfs(Vertex* current, Vertex* destination, vector<vector<pair<string, TransportType>>>& allPaths, vector<pair<string, TransportType>>& currentPath, unordered_map<Vertex*, bool>& visited) {
     visited[current] = true;
-    currentPath.push_back(current->name);
+    currentPath.push_back({current->name, TransportType::Metro}); // می توانید از هر نوع حمل و نقلی که مد نظر خودتان استفاده کنید.
     if (current == destination) {
         allPaths.push_back(currentPath);
     } else {
@@ -80,7 +80,7 @@ void dfs(Vertex* current, Vertex* destination, vector<vector<string>>& allPaths,
     visited[current] = false;
 }
 
-void printShortestPath(const vector<vector<string>>& allPaths, const unordered_map<string, int>& distances) {
+void printShortestPath(const vector<vector<pair<string, TransportType>>>& allPaths, const unordered_map<string, int>& distances) {
     if (allPaths.empty()) {
         cout << "No path exists." << endl;
         return;
@@ -90,7 +90,8 @@ void printShortestPath(const vector<vector<string>>& allPaths, const unordered_m
     for (size_t i = 0; i < allPaths.size(); ++i) {
         int pathDistance = 0;
         for (size_t j = 0; j < allPaths[i].size() - 1; ++j) {
-            pathDistance += distances.at(allPaths[i][j] + "-" + allPaths[i][j + 1]);
+            string edgeName = allPaths[i][j].first + "-" + allPaths[i][j + 1].first;
+            pathDistance += distances.at(edgeName);
         }
         if (pathDistance < shortestDistance) {
             shortestDistance = pathDistance;
@@ -99,7 +100,19 @@ void printShortestPath(const vector<vector<string>>& allPaths, const unordered_m
     }
     cout << "Shortest path: ";
     for (size_t i = 0; i < allPaths[shortestPathIndex].size(); ++i) {
-        cout << allPaths[shortestPathIndex][i];
+        cout << allPaths[shortestPathIndex][i].first << " ("; // نام راس
+        switch (allPaths[shortestPathIndex][i].second) {
+            case TransportType::Metro:
+                cout << "Metro";
+                break;
+            case TransportType::Bus:
+                cout << "Bus";
+                break;
+            case TransportType::Taxi:
+                cout << "Taxi";
+                break;
+        }
+        cout << ")";
         if (i + 1 < allPaths[shortestPathIndex].size()) {
             cout << " -> ";
         }
@@ -123,8 +136,8 @@ void findPaths(const vector<Vertex*>& vertices, const string& sourceName, const 
         cerr << "Error: Source or destination vertex not found." << endl;
         return;
     }
-    vector<vector<string>> allPaths;
-    vector<string> currentPath;
+    vector<vector<pair<string, TransportType>>> allPaths;
+    vector<pair<string, TransportType>> currentPath;
     dfs(source, destination, allPaths, currentPath, visited);
 
     unordered_map<string, int> distances;
