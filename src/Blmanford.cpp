@@ -192,30 +192,36 @@ PathResult findShortestPath(const unordered_map<string, Vertex*>& vertices, cons
     return {shortestPath, totalDistance};
 }
 
-void printShortestPath(const PathResult& result, const unordered_map<string, Vertex*>& vertices) {
-    cout << "Shortest path:" << endl;
-    for (size_t i = 0; i < result.path.size() - 1; ++i) {
-        string station1 = result.path[i].first;
-        string station2 = result.path[i + 1].first;
-        Vertex* vertex1 = vertices.at(station1);
-        Vertex* vertex2 = vertices.at(station2);
-        cout << station1 << " -> " << station2 << " (" << transportTypeToString(result.path[i].second) << ", " << colourToString(vertex1->colour) << " to " << colourToString(vertex2->colour) << ")" << endl;
-    }
- 
-    string destination = result.path.back().first;
-    Vertex* destVertex = vertices.at(destination);
-    cout << destination << " (Destination) - Colour: " << colourToString(destVertex->colour) << endl;
-    cout << "Total Distance: " << result.distance << endl;
+void updateWeight(unordered_map<string, Vertex*>& vertices, const string& originName, const string& destName, int newWeight) {
+    Vertex* origin = vertices.at(originName);
+    Vertex* destination = vertices.at(destName);
+    origin->neighbors[destination].first = newWeight;
 }
 
 int main() {
     try {
         string filename = "input.txt";
         unordered_map<string, Vertex*> vertices = readGraphFromFile(filename);
+        
+        // Original shortest path
         string sourceName = "Yadegar-e_Emam";
         string destinationName = "Haftom-e_Tir";
         PathResult result = findShortestPath(vertices, sourceName, destinationName);
-        printShortestPath(result, vertices);
+        cout << "Original Shortest path:" << endl;
+        for (auto& step : result.path) {
+            cout << step.first << " (" << transportTypeToString(step.second) << "), ";
+        }
+        cout << "\nOriginal Total Distance: " << result.distance << endl;
+        
+        // Update weight and recalculate shortest path
+        updateWeight(vertices, "Meydan-e_Hazrat-e_ValiAsr", "Haftom-e_Tir", 5); // Example weight change
+        result = findShortestPath(vertices, sourceName, destinationName);
+        cout << "\nUpdated Shortest path:" << endl;
+        for (auto& step : result.path) {
+            cout << step.first << " (" << transportTypeToString(step.second) << "), ";
+        }
+        cout << "\nUpdated Total Distance: " << result.distance << endl;
+
         for (auto& vertex : vertices) {
             delete vertex.second;
         }
