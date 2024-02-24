@@ -38,7 +38,6 @@ struct Vertex {
 
 struct PathResult {
     vector<pair<string, TransportType>> path;
-    vector<int> weights;
     int distance;
 };
 
@@ -147,7 +146,20 @@ unordered_map<string, Vertex*> readGraphFromFile(const string& filename) {
     return vertices;
 }
 
+void updateWeightsIfColourChanged(unordered_map<string, Vertex*>& vertices) {
+    for (auto& vertex : vertices) {
+        for (auto& neighbor : vertex.second->neighbors) {
+            if (neighbor.first->colour != vertex.second->colour) {
+                neighbor.second.first *= 2; // Double the weight if colours are different
+            }
+        }
+    }
+}
+
 PathResult findShortestPath(unordered_map<string, Vertex*>& vertices, const string& sourceName, const string& destinationName) {
+    // Update weights if colours have changed
+    updateWeightsIfColourChanged(vertices);
+
     unordered_map<string, int> distances;
     unordered_map<string, string> previous;
     for (auto& vertex : vertices) {
@@ -175,7 +187,6 @@ PathResult findShortestPath(unordered_map<string, Vertex*>& vertices, const stri
         }
     }
     vector<pair<string, TransportType>> shortestPath;
-    vector<int> weights;
     string current = destinationName;
     int totalDistance = distances[destinationName];
     while (current != sourceName) {
@@ -185,37 +196,29 @@ PathResult findShortestPath(unordered_map<string, Vertex*>& vertices, const stri
             Vertex* prev = neighbor.first;
             if (prev->name == prevName) {
                 shortestPath.push_back({current, neighbor.second.second});
-                weights.push_back(neighbor.second.first);
                 current = prevName;
                 break;
             }
         }
     }
     reverse(shortestPath.begin(), shortestPath.end());
-    reverse(weights.begin(), weights.end());
-    return {shortestPath, weights, totalDistance};
+    return {shortestPath, totalDistance};
 }
 
-void changeWeightsIfColourChanged(unordered_map<string, Vertex*>& vertices) {
-    for (auto& vertex : vertices) {
-        for (auto& neighbor : vertex.second->neighbors) {
-            if (neighbor.first->colour != vertex.second->colour) {
-                int originalWeight = neighbor.second.first;
-                neighbor.second.first *= 2; // تغییر وزن یال
-                cout << "Weight of edge between " << vertex.second->name << " and " << neighbor.first->name << " changed from " << originalWeight << " to " << neighbor.second.first << endl;
-            }
-        }
-    }
-}
-
-void printShortestPath(const PathResult& result, const unordered_map<string, Vertex*>& vertices) {
+void printPathWithWeights(const PathResult& result, unordered_map<string, Vertex*>& vertices) {
     cout << "Shortest path:" << endl;
     for (size_t i = 0; i < result.path.size(); ++i) {
-        string station1 = result.path[i].first;
-        string station2 = i < result.path.size() - 1 ? result.path[i + 1].first : "";
-        Vertex* vertex1 = vertices.at(station1);
-        Vertex* vertex2 = vertices.at(station2);
-        cout << station1 << " -> " << station2 << " (" << transportTypeToString(result.path[i].second) << ", " << colourToString(vertex1->colour) << " to " << colourToString(vertex2->colour) << ") - Weight: " << result.weights[i] << endl;
+        string currentName = result.path[i].first;
+        TransportType transportType = result.path[i].second;
+        Vertex* current = vertices[currentName];
+        string nextName = (i < result.path.size() - 1) ? result.path[i + 1].first : "";
+        if (nextName != "") {
+            Vertex* next = vertices[nextName];
+            auto weight = current->neighbors[next].first;
+            cout << currentName << " (" << transportTypeToString(transportType) << ") - Weight: " << weight << " - Colour: " << colourToString(current->colour) << endl;
+        } else {
+            cout << currentName << " (" << transportTypeToString(transportType) << ") - Colour: " << colourToString(current->colour) << endl;
+        }
     }
     cout << "Total Distance: " << result.distance << endl;
 }
@@ -224,16 +227,10 @@ int main() {
     try {
         string filename = "input.txt";
         unordered_map<string, Vertex*> vertices = readGraphFromFile(filename);
-        string sourceName = "Meydan-e_Azadi";
+        string sourceName = "Ostad_Mo'in";
         string destinationName = "Haftom-e_Tir";
-
-
-        changeWeightsIfColourChanged(vertices);
-
         PathResult result = findShortestPath(vertices, sourceName, destinationName);
-        printShortestPath(result, vertices);
-
-      
+        printPathWithWeights(result, vertices);
         for (auto& vertex : vertices) {
             delete vertex.second;
         }
