@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <queue>
 #include <limits>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,12 +16,94 @@ enum class TransportType {
     Taxi,
 };
 
+enum class Colour {
+    RED,
+    BLUE,
+    YELLOW,
+    PINK,
+    GRAY,
+    GREEN,
+    BROWN,
+    YELLOW_Dark,
+    GREEN_Dark,
+};
+
 struct Vertex {
     string name;
     unordered_map<Vertex*, pair<int, TransportType>> neighbors;
+    Colour colour;
 
-    explicit Vertex(const string& name) : name(name) {}
+    explicit Vertex(const string& name, Colour colour) : name(name), colour(colour) {}
 };
+
+struct PathResult {
+    vector<pair<string, TransportType>> path;
+    int distance;
+};
+
+Colour stringToColour(const string& colourStr) {
+    int colourCode = stoi(colourStr);
+    switch(colourCode) {
+        case 1:
+            return Colour::RED;
+        case 2:
+            return Colour::BLUE;
+        case 3:
+            return Colour::YELLOW;
+        case 4:
+            return Colour::PINK;
+        case 5:
+            return Colour::GRAY;
+        case 6:
+            return Colour::GREEN;
+        case 7:
+            return Colour::BROWN;
+        case 8:
+            return Colour::YELLOW_Dark;
+        case 9:
+            return Colour::GREEN_Dark;
+        default:
+            throw invalid_argument("Invalid colour code.");
+    }
+}
+
+string transportTypeToString(TransportType type) {
+    switch(type) {
+        case TransportType::Metro:
+            return "Metro";
+        case TransportType::Bus:
+            return "Bus";
+        case TransportType::Taxi:
+            return "Taxi";
+        default:
+            return "Unknown";
+    }
+}
+
+string colourToString(Colour colour) {
+    switch(colour) {
+        case Colour::RED:
+            return "Red";
+        case Colour::BLUE:
+            return "Blue";
+        case Colour::YELLOW:
+            return "Yellow";
+        case Colour::PINK:
+            return "Pink";
+        case Colour::GRAY:
+            return "Gray";
+        case Colour::GREEN:
+            return "Green";
+        case Colour::BROWN:
+            return "Brown";
+        case Colour::YELLOW_Dark:
+            return "Yellow_Dark";
+        case Colour::GREEN_Dark:
+            return "Green_Dark";
+        default:
+            return "Unknown";
+    }
+}
 
 unordered_map<string, Vertex*> readGraphFromFile(const string& filename) {
     unordered_map<string, Vertex*> vertices;
@@ -31,15 +114,16 @@ unordered_map<string, Vertex*> readGraphFromFile(const string& filename) {
     string line;
     while (getline(file, line)) {
         istringstream iss(line);
-        string originName, destName;
+        string originName, destName, colourstr;
         int weight;
         string transportTypeStr;
-        if (iss >> originName >> destName >> weight >> transportTypeStr) {
+        if (iss >> originName >> destName >> weight >> transportTypeStr >> colourstr) {
+            Colour colour = stringToColour(colourstr);
             if (vertices.find(originName) == vertices.end()) {
-                vertices[originName] = new Vertex(originName);
+                vertices[originName] = new Vertex(originName, colour);
             }
             if (vertices.find(destName) == vertices.end()) {
-                vertices[destName] = new Vertex(destName);
+                vertices[destName] = new Vertex(destName, colour);
             }
             TransportType transportType;
             switch (stoi(transportTypeStr)) {
@@ -62,39 +146,50 @@ unordered_map<string, Vertex*> readGraphFromFile(const string& filename) {
     return vertices;
 }
 
-void bellmanFord(unordered_map<string, Vertex*>& vertices, const string& sourceName) {
+PathResult findShortestPath(const unordered_map<string, Vertex*>& vertices, const string& sourceName, const string& destinationName) {
     unordered_map<string, int> distances;
+    unordered_map<string, string> previous;
     for (auto& vertex : vertices) {
         distances[vertex.first] = numeric_limits<int>::max();
     }
     distances[sourceName] = 0;
-
-    for (size_t i = 0; i < vertices.size() - 1; ++i) {
-        for (auto& vertex : vertices) {
-            for (auto& neighbor : vertex.second->neighbors) {
-                int weight = neighbor.second.first;
-                if (distances[vertex.first] != numeric_limits<int>::max() && distances[vertex.first] + weight < distances[neighbor.first->name]) {
-                    distances[neighbor.first->name] = distances[vertex.first] + weight;
-                }
-            }
+    queue<string> q;
+    q.push(sourceName);
+    while (!q.empty()) {
+        string currentName = q.front();
+        q.pop();
+        Vertex* current = vertices.at(currentName);
+        if (currentName == destinationName) {
+            break;
         }
-    }
-
-    // Check for negative weight cycles
-    for (auto& vertex : vertices) {
-        for (auto& neighbor : vertex.second->neighbors) {
+        for (auto& neighbor : current->neighbors) {
+            Vertex* next = neighbor.first;
             int weight = neighbor.second.first;
-            if (distances[vertex.first] != numeric_limits<int>::max() && distances[vertex.first] + weight < distances[neighbor.first->name]) {
-                throw runtime_error("Error: Graph contains negative weight cycle.");
+            int newDist = distances[currentName] + weight;
+            if (newDist < distances[next->name]) {
+                distances[next->name] = newDist;
+                q.push(next->name);
+                previous[next->name] = currentName;
             }
         }
     }
-
-    // Print distances
-    cout << "Shortest distances from " << sourceName << ":\n";
-    for (auto& distance : distances) {
-        cout << distance.first << ": " << distance.second << endl;
+    vector<pair<string, TransportType>> shortestPath;
+    string current = destinationName;
+    int totalDistance = distances[destinationName];
+    while (current != sourceName) {
+        Vertex* vertex = vertices.at(current);
+        string prevName = previous.at(current);
+        for (auto& neighbor : vertex->neighbors) {
+            Vertex* prev = neighbor.first;
+            if (prev->name == prevName) {
+                shortestPath.push_back({current, neighbor.second.second});
+                current = prevName;
+                break;
+            }
+        }
     }
+    reverse(shortestPath.begin(), shortestPath.end());
+    return {shortestPath, totalDistance};
 }
 
 int main() {
@@ -102,9 +197,9 @@ int main() {
         string filename = "input.txt";
         unordered_map<string, Vertex*> vertices = readGraphFromFile(filename);
         string sourceName = "Yadegar-e_Emam";
-        bellmanFord(vertices, sourceName);
-
-        // Free allocated memory
+        string destinationName = "Haftom-e_Tir";
+        PathResult result = findShortestPath(vertices, sourceName, destinationName);
+        cout << "Total Distance: " << result.distance << endl;
         for (auto& vertex : vertices) {
             delete vertex.second;
         }
