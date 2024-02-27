@@ -117,6 +117,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
                 int weight = neighbor.second.first;//vazne yal
                 if (dist + weight < moneyCost[v]) {
                     moneyCost[v] = dist + weight;
+                    cout << "120: moneycost: " << moneyCost[v] << endl;
                     pq.push({moneyCost[v], v});
                     parent[v] = u;
                 }
@@ -130,6 +131,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
                     int weight = neighbor.second.first;//vazne yal
                     if (dist + weight < moneyCost[v]) {
                     moneyCost[v] = dist + weight;
+                    cout << "134: moneycost: " << moneyCost[v] << endl;
                     pq.push({moneyCost[v], v});
                     parent[v] = u;
                     }
@@ -138,12 +140,14 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
             else if(neighbor.first->TransportationType == "SUBWAY"){
                 cout << "residam khat 139"  << endl;
                 cout << "color subway line: " << tempColorSubLine << endl;
+                
                 if(neighbor.first->ColorOfLine != tempColorSubLine){
                     tempColorSubLine = neighbor.first->ColorOfLine;
                     Vertex* v = neighbor.first; // maghsad
                     int weight = neighbor.second.first;//vazne yal
                     if (dist + weight < moneyCost[v]) {
                     moneyCost[v] = dist + weight;
+                    cout << "150: moneycost: " << moneyCost[v] << endl;
                     pq.push({moneyCost[v], v});
                     parent[v] = u;
                     }
@@ -186,7 +190,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
                 cout << " -> ";
             }
         }
-        cout << ", Distance: " << moneyCost[destination] << endl;
+        cout << endl << "Lowest Cost of money: " << moneyCost[destination] << endl;
     }
 }
 
@@ -194,12 +198,13 @@ int main() {
     try {
         string filename = "input.txt";
         vector<Vertex*> vertices = readGraphFromFile(filename);
-        string originName = "Ferdowsi";
-        string destinationName = "Ebn-e_Sina";
+        string originName = "Pirouzi";
+        string destinationName = "Ostad_Mo'in";
         dijkstra(vertices, originName, destinationName);
         for (Vertex* vertex : vertices) {
             delete vertex;
         }
+
     } catch (const exception& e) {
         cerr << e.what() << endl;
     }
