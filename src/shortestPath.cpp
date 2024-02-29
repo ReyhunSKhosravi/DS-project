@@ -41,19 +41,19 @@ vector<Vertex*> readGraphFromFile(const string& filename) {
         int weight;
         string transportTypeStr; 
         if (iss >> originName >> destName >> weight >> transportTypeStr) {
-            cout << "i: " << i << " & " << originName << " & " << destName << " & " << weight << " & " << transportTypeStr << endl;
-            i++;
+            // cout << "i: " << i << " & " << originName << " & " << destName << " & " << weight << " & " << transportTypeStr << endl;
+            // i++;
             
             if (vertexMap.count(originName) == 0) {
-                cout << endl << "j: " << j << "   -----------> " << originName << endl;
-                j++;
+                // cout << endl << "j: " << j << "   -----------> " << originName << endl;
+                // j++;
                 Vertex* originVertex = new Vertex(originName);
                 vertices.push_back(originVertex);
                 vertexMap[originName] = originVertex;
             }
             if (vertexMap.count(destName) == 0) {
-                cout << endl << "j: " << j << "   -----------> " << destName << endl;
-                j++;
+                // cout << endl << "j: " << j << "   -----------> " << destName << endl;
+                // j++;
                 Vertex* destVertex = new Vertex(destName);
                 vertices.push_back(destVertex);
                 vertexMap[destName] = destVertex;
@@ -103,10 +103,10 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
     int i = 0; // hame yal hayi ke bayad barresi shavad
     for (Vertex* vertex : vertices) {
         distance[vertex] = numeric_limits<int>::max();
-        cout << "i" << i << " khat 93 : " << distance[vertex] << endl;
-        i++;
+        // cout << "i" << i << " khat 93 : " << distance[vertex] << endl;
+        // i++;
     }
-    cout << "size of vector: " << vertices.size() << endl;
+    // cout << "size of vector: " << vertices.size() << endl;
     distance[origin] = 0; // node shorore dar ebteda 0
     priority_queue<pair<int, Vertex*>, vector<pair<int, Vertex*>>, greater<pair<int, Vertex*>>> pq; //safe node hayi ke bayad barresi beshe
     pq.push({0, origin});
