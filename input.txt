@@ -70,7 +70,7 @@ Tajrish                     Gheytariyeh                 2           SUBWAY      
 Kahrizak                    Shahr-e_Ray                 13          SUBWAY          RED
 Shahr-e_Ray                 Jounub_Terminal             9           SUBWAY          RED
 Jounub_Terminal             Shoush                      3           SUBWAY          RED
-Shoush                      Panzdah_e_Khordad           6           SUBWAY          RED
+Shoush                      Panzdah-e_Khordad           6           SUBWAY          RED
 Panzdah-e_Khordad           Darvazeh_Dowlat             4           SUBWAY          RED
 Darvazeh_Dowlat             Taleghani                   1           SUBWAY          RED
 Taleghani                   Haftom-e_Tir                2           SUBWAY          RED
@@ -87,8 +87,8 @@ Shahid_Zeynoddin            Shahid_Ghodousi             5           SUBWAY      
 Shahid_Ghodousi             Sohrevardi                  2           SUBWAY          BLUE
 Sohrevardi                  Shahid_Beheshti             1           SUBWAY          BLUE
 Shahid_Beheshti             Mirza-ye_Shirazi            3           SUBWAY          BLUE
-Mirza_ye_Shirazi            Meydan-e_jahad              2           SUBWAY          BLUE    
-Meydan-e_jahad              Meydan-e_Hazrat_e_ValiAsr   1           SUBWAY          BLUE          
+Mirza-ye_Shirazi            Meydan-e_jahad              2           SUBWAY          BLUE    
+Meydan-e_jahad              Meydan-e_Hazrat-e_ValiAsr   1           SUBWAY          BLUE          
 Meydan-e_Hazrat-e_ValiAsr   Teatr-e_shahr               2           SUBWAY          BLUE
 Teatr-e_shahr               Moniriyeh                   4           SUBWAY          BLUE
 Moniriyeh                   Mahdiyeh                    3           SUBWAY          BLUE
@@ -103,9 +103,9 @@ Sohrevardi                  Shahid_Ghodousi             2           SUBWAY      
 Shahid_Beheshti             Sohrevardi                  1           SUBWAY          BLUE
 Mirza-ye_Shirazi            Shahid_Beheshti             3           SUBWAY          BLUE
 Meydan-e_jahad              Mirza-ye_Shirazi            2           SUBWAY          BLUE
-Meydan-e_Hazrat_e_ValiAsr   Meydan-e_jahad              1           SUBWAY          BLUE
-Teatr-e_shahr               Meydan-e_Hazrat_e_ValiAsr   2           SUBWAY          BLUE
-Moniriyeh                   Teatr-e_shah                4           SUBWAY          BLUE
+Meydan-e_Hazrat-e_ValiAsr   Meydan-e_jahad              1           SUBWAY          BLUE
+Teatr-e_shahr               Meydan-e_Hazrat-e_ValiAsr   2           SUBWAY          BLUE
+Moniriyeh                   Teatr-e_shahr               4           SUBWAY          BLUE
 Mahdiyeh                    Moniriyeh                   3           SUBWAY          BLUE
 Rahahan                     Mahdiyeh                    1           SUBWAY          BLUE
 Javadiyeh                   Rahahan                     2           SUBWAY          BLUE
@@ -128,7 +128,7 @@ Tajrish                     Gheytariyeh                 2           TAXI        
 Kahrizak                    Shahr-e_Ray                 13          TAXI            RED
 Shahr-e_Ray                 Jounub_Terminal             9           TAXI            RED
 Jounub_Terminal             Shoush                      3           TAXI            RED
-Shoush                      Panzdah_e_Khordad           6           TAXI            RED
+Shoush                      Panzdah-e_Khordad           6           TAXI            RED
 Panzdah-e_Khordad           Darvazeh_Dowlat             4           TAXI            RED
 Darvazeh_Dowlat             Taleghani                   1           TAXI            RED
 Taleghani                   Haftom-e_Tir                2           TAXI            RED
@@ -145,8 +145,8 @@ Shahid_Zeynoddin            Shahid_Ghodousi             5           TAXI        
 Shahid_Ghodousi             Sohrevardi                  2           TAXI            BLUE
 Sohrevardi                  Shahid_Beheshti             1           TAXI            BLUE
 Shahid_Beheshti             Mirza-ye_Shirazi            3           TAXI            BLUE
-Mirza_ye_Shirazi            Meydan-e_jahad              2           TAXI            BLUE
-Meydan-e_jahad              Meydan-e_Hazrat_e_ValiAsr   1           TAXI            BLUE
+Mirza-ye_Shirazi            Meydan-e_jahad              2           TAXI            BLUE
+Meydan-e_jahad              Meydan-e_Hazrat-e_ValiAsr   1           TAXI            BLUE
 Meydan-e_Hazrat-e_ValiAsr   Teatr-e_shahr               2           TAXI            BLUE
 Teatr-e_shahr               Moniriyeh                   4           TAXI            BLUE
 Moniriyeh                   Mahdiyeh                    3           TAXI            BLUE
@@ -161,9 +161,9 @@ Sohrevardi                  Shahid_Ghodousi             2           TAXI        
 Shahid_Beheshti             Sohrevardi                  1           TAXI            BLUE    
 Mirza-ye_Shirazi            Shahid_Beheshti             3           TAXI            BLUE
 Meydan-e_jahad              Mirza-ye_Shirazi            2           TAXI            BLUE
-Meydan-e_Hazrat_e_ValiAsr   Meydan-e_jahad              1           TAXI            BLUE
-Teatr-e_shahr               Meydan-e_Hazrat_e_ValiAsr   2           TAXI            BLUE
-Moniriyeh                   Teatr-e_shah                4           TAXI            BLUE
+Meydan-e_Hazrat-e_ValiAsr   Meydan-e_jahad              1           TAXI            BLUE
+Teatr-e_shahr               Meydan-e_Hazrat-e_ValiAsr   2           TAXI            BLUE
+Moniriyeh                   Teatr-e_shahr               4           TAXI            BLUE
 Mahdiyeh                    Moniriyeh                   3           TAXI            BLUE
 Rahahan                     Mahdiyeh                    1           TAXI            BLUE    
 Javadiyeh                   Rahahan                     2           TAXI            BLUE
@@ -249,4 +249,3 @@ Gha'em                      Khajeh_Abdollah-e_Ansari    12          BUS         
 Pirouzi                     Gha'em                      19          BUS             BROWN
 Shahid_Rezaei               Pirouzi                     8           BUS             BROWN
 Payaneh_Javanmard           Shahid_Rezaei               8           BUS             BROWN
-
