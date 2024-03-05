@@ -9,7 +9,6 @@
 
 using namespace std;
 
-
 //------------------------------------------------------------------------------------------Enum for type of vehicles
 enum class TransportType {
     Subway,
@@ -146,7 +145,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
             current = parent[current];
         }
         int i = 0;
-        string preTran;
+        string preTran = "none", preColor = "none";
         for (auto it = path.rbegin(), it2 = path.rbegin() + 1; it != path.rend(); ++it, ++it2) {
             ifstream findfile("input.txt");
             string linefile;
@@ -163,6 +162,39 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
                         iss >> tempName >> tempDes >> tempWeight >> tempTran >> tempColor;
                         if((tempName == *it) && (tempDes == *it2) && (tempTran == "SUBWAY")){
                             time += ( stoi(tempWeight) * 1);
+                            if(preTran != tempTran){
+                                if(tempTran == "BUS"){
+                                    time += 15;
+                                    preTran = tempTran;
+                                }
+                                if(tempTran == "SUBWAY"){
+                                    time += 8;
+                                    preTran = tempTran;
+                                }
+                                if(tempTran == "TAXI"){
+                                    time += 5;
+                                    preTran = tempTran;
+                                }
+                            }
+                            if(preTran == "SUBWAY"){
+                                if((tempTran == "SUBWAY") && (preColor != tempColor)){
+                                    time += 8;
+                                    preColor = tempColor;
+                                }
+                            }
+                            else if(preTran == "BUS"){
+                                if((tempTran == "BUS") && (preColor != tempColor)){
+                                    time += 15;
+                                    preColor = tempColor;
+                                }
+                            }
+                            else if(preTran == "TAXI"){
+                                if((tempTran == "TAXI") && (preColor != tempColor)){
+                                    time += 15;
+                                    preColor = tempColor;
+                                }
+                            }
+                            
                             cout << " (dis : "<< stoi(tempWeight) << " / time: " << stoi(tempWeight) * 1 << ") ";
                         }
                     }
@@ -176,6 +208,38 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
                         iss >> tempName >> tempDes >> tempWeight >> tempTran >> tempColor;
                         if((tempName == *it) && (tempDes == *it2) && (tempTran == "BUS")){
                             time += ( stoi(tempWeight) * 4);
+                            if(preTran != tempTran){
+                                if(tempTran == "BUS"){
+                                    time += 15;
+                                    preTran = tempTran;
+                                }
+                                if(tempTran == "SUBWAY"){
+                                    time += 8;
+                                    preTran = tempTran;
+                                }
+                                if(tempTran == "TAXI"){
+                                    time += 5;
+                                    preTran = tempTran;
+                                }
+                            }
+                            if(preTran == "SUBWAY"){
+                                if((tempTran == "SUBWAY") && (preColor != tempColor)){
+                                    time += 8;
+                                    preColor = tempColor;
+                                }
+                            }
+                            else if(preTran == "BUS"){
+                                if((tempTran == "BUS") && (preColor != tempColor)){
+                                    time += 15;
+                                    preColor = tempColor;
+                                }
+                            }
+                            else if(preTran == "TAXI"){
+                                if((tempTran == "TAXI") && (preColor != tempColor)){
+                                    time += 15;
+                                    preColor = tempColor;
+                                }
+                            }
                             cout << " (dis : "<< stoi(tempWeight) << " / time: " << stoi(tempWeight) * 4 << ") ";
                         }
                     }
@@ -189,6 +253,38 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
                         iss >> tempName >> tempDes >> tempWeight >> tempTran >> tempColor;
                         if((tempName == *it) && (tempDes == *it2) && (tempTran == "TAXI")){
                             time += ( stoi(tempWeight) * 2);
+                            if(preTran != tempTran){
+                                if(tempTran == "BUS"){
+                                    time += 15;
+                                    preTran = tempTran;
+                                }
+                                if(tempTran == "SUBWAY"){
+                                    time += 8;
+                                    preTran = tempTran;
+                                }
+                                if(tempTran == "TAXI"){
+                                    time += 5;
+                                    preTran = tempTran;
+                                }
+                            }
+                            if(preTran == "SUBWAY"){
+                                if((tempTran == "SUBWAY") && (preColor != tempColor)){
+                                    time += 8;
+                                    preColor = tempColor;
+                                }
+                            }
+                            else if(preTran == "BUS"){
+                                if((tempTran == "BUS") && (preColor != tempColor)){
+                                    time += 15;
+                                    preColor = tempColor;
+                                }
+                            }
+                            else if(preTran == "TAXI"){
+                                if((tempTran == "TAXI") && (preColor != tempColor)){
+                                    time += 15;
+                                    preColor = tempColor;
+                                }
+                            }
                             cout << " (dis : "<< stoi(tempWeight) << " / time: " << stoi(tempWeight) * 2 << ") ";
                         }
                     }
@@ -202,7 +298,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
             i++;
             transportTypes.pop_back();
         }
-        cout << "Distance: " << distance[destination] << "  time : " << time << endl;
+        cout << "Distance: " << distance[destination] << "km and arriving time : " << time << "mins" << endl;
     }
 }
 
