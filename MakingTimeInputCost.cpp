@@ -5,20 +5,6 @@
 
 using namespace std;
 
-// bool findDuplicate(const string& filename, const string& mainline){
-//     ifstream duplicate(filename);
-//     string dupLine;
-//     while (getline(duplicate, dupLine))
-//     {
-//        if(dupLine == mainline){
-//         cout << "---> " << mainline << endl << "dupline:  " << dupLine << endl;
-//         return false;
-//        }
-//     }
-//     return true;
-    
-// }
-
 int main(){
     ifstream file("input.txt");
     if (!file.is_open()) {
@@ -182,18 +168,48 @@ int main(){
                         }
                     }
               }
-            //   else if((preOrigin != tempName))
-            //   {//yani faghat ye duneh masir hast in vasat!:
-            //     if(tempTran == "BUS"){
-            //             inputTimeCost << preOrigin << "\t" << preDest << "\t" << ((stoi(tempWeight) * 4) + 15 ) << "\t"<< tempTran << "\t" << tempColor << "\n";
-            //         }
-            //         else if(tempTran == "SUBWAY"){
-            //             inputTimeCost << preOrigin << "\t" << preDest << "\t" << ((stoi(tempWeight) * 1) + 8 ) <<"\t"<< tempTran << "\t" << tempColor << "\n";
-            //         }
-            //         else if(tempTran == "TAXI"){
-            //             inputTimeCost << preOrigin << "\t" << preDest << "\t" << ((stoi(tempWeight) * 4) + 5 ) << "\t"<< tempTran << "\t" << tempColor << "\n";
-            //         }
-            //   }
+              /*else if((preOrigin != tempName))
+              {//yani faghat ye duneh masir hast in vasat!:
+                if(tempTran == "BUS"){
+                    templine =  (preOrigin + "\t" + preDest + "\t" + to_string(((stoi(tempWeight) * 4) + 15 )) + "\t" + tempTran + "\t" + tempColor);
+                            for(auto it = linesoffile.rbegin(); it != linesoffile.rend(); ++it){
+                                    if(*it == templine){
+                                        havedup = true;
+                                    }
+                            }
+                            if(!havedup){
+                        inputTimeCost << preOrigin << "\t" << preDest << "\t" << ((stoi(tempWeight) * 4) + 15 ) << "\t"<< tempTran << "\t" << tempColor << "\n";
+                        linesoffile.push_back(templine);
+                            
+                            }
+                    }
+                    else if(tempTran == "SUBWAY"){
+                        templine =  (preOrigin + "\t" + preDest + "\t" + to_string(((stoi(tempWeight) * 1) + 8 )) + "\t" + tempTran + "\t" + tempColor);
+                            for(auto it = linesoffile.rbegin(); it != linesoffile.rend(); ++it){
+                                    if(*it == templine){
+                                        havedup = true;
+                                    }
+                            }
+                            if(!havedup){
+                        inputTimeCost << preOrigin << "\t" << preDest << "\t" << ((stoi(tempWeight) * 1) + 8 ) <<"\t"<< tempTran << "\t" << tempColor << "\n";
+                        linesoffile.push_back(templine);
+                            
+                            }
+                    }
+                    else if(tempTran == "TAXI"){
+                        templine =  (preOrigin + "\t" + preDest + "\t" + to_string(((stoi(tempWeight) * 4) + 5 )) + "\t" + tempTran + "\t" + tempColor);
+                            for(auto it = linesoffile.rbegin(); it != linesoffile.rend(); ++it){
+                                    if(*it == templine){
+                                        havedup = true;
+                                    }
+                            }
+                            if(!havedup){
+                        inputTimeCost << preOrigin << "\t" << preDest << "\t" << ((stoi(tempWeight) * 4) + 5 ) << "\t"<< tempTran << "\t" << tempColor << "\n";
+                        linesoffile.push_back(templine);
+                            
+                            }
+                    }
+              }*/
             
             }
             j++;
