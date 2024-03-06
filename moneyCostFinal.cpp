@@ -304,7 +304,7 @@ void dijkstra(const vector<Vertex*>& vertices, const string& sourceName, const s
 
 int main() {
     try {
-        string filename = "input.txt";
+        string filename = "MoneyCostInput.txt";
         vector<Vertex*> vertices = readGraphFromFile(filename);
         string originName = "Kashani";
         string destinationName = "Bimeh";
